@@ -18,7 +18,8 @@ public class Gyroscope : MonoBehaviour
     {
         //rot.y = Input.gyro.rotationRateUnbiased.y;
         Vector3 gyroRate = Input.gyro.rotationRateUnbiased * Mathf.Rad2Deg;
-        rot = gyroRate * Time.deltaTime;
+        Vector3 rot = gyroRate * Time.deltaTime;
+        //rot = new Vector3(rot.x, 0f, 0f);
         transform.Rotate(rot);
     }
 }
