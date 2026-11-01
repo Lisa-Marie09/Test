@@ -1,39 +1,64 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.InputSystem.EnhancedTouch;
+using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
 
 public class SwitchScene : MonoBehaviour
 {
+    
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         
     }
+    
+    private void OnEnable()
+    {
+        EnhancedTouchSupport.Enable();
+    }
 
+    private void OnDisable()
+    {
+        EnhancedTouchSupport.Disable();
+    }
+    
     // Update is called once per frame
     void Update()
     {
-        if (Input.touchCount > 0 && Input.touches[0].phase == TouchPhase.Began)
+        if (Touch.activeTouches.Count > 0)
         {
-            Debug.Log("Touch erkannt");
-            Ray ray = Camera.main.ScreenPointToRay(Input.touches[0].position);
-            RaycastHit hit;
+            Touch touch = Touch.activeTouches[0];
 
-            if (Physics.Raycast(ray, out hit))
+            if (touch.phase == UnityEngine.InputSystem.TouchPhase.Began)
             {
-                Debug.Log("2. Etwas getroffen: " + hit.transform.name);
-                if (hit.transform.tag == "Object")
+                Debug.Log("Touch erkannt");
+
+                Ray ray = Camera.main.ScreenPointToRay(
+                    touch.screenPosition
+                );
+
+                RaycastHit hit;
+
+                if (Physics.Raycast(ray, out hit))
                 {
-                    SceneManager.LoadScene("Test");
-                    Debug.Log("Klappt");
-                }else{
-                    Debug.Log("Falsches Tag! Das Objekt hat das Tag: " + hit.transform.tag);
+                    Debug.Log("Etwas getroffen: " + hit.transform.name);
+
+                    if (hit.transform.CompareTag("Object"))
+                    {
+                        SceneManager.LoadScene("Test");
+                        Debug.Log("Klappt");
+                    }
+                    else
+                    {
+                        Debug.Log("Falsches Tag! Das Objekt hat das Tag: "
+                                  + hit.transform.tag);
+                    }
+                }
+                else
+                {
+                    Debug.Log("Raycast ins Leere gegangen (nichts getroffen).");
                 }
             }
-            else
-            {
-                Debug.Log("Raycast ins Leere gegangen (nichts getroffen).");
-            }
-            
         }
         
     }

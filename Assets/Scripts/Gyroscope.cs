@@ -1,25 +1,33 @@
 using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
-
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Android;
 
 public class Gyroscope : MonoBehaviour
 {
-    public Vector3 rot;
+    private AttitudeSensor _sensor;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        rot = Vector3.zero;
-        Input.gyro.enabled = true;
+        _sensor = InputSystem.GetDevice<AndroidGameRotationVector>();
+
+        if (_sensor == null)
+            _sensor = InputSystem.GetDevice<AndroidRotationVector>();
+
+        if (_sensor == null)
+        {
+            Debug.LogError("No rotation sensor available!");
+            return;
+        }
+
+        InputSystem.EnableDevice(_sensor);
     }
 
     // Update is called once per frame
     void Update()
     {
-        //rot.y = Input.gyro.rotationRateUnbiased.y;
-        Vector3 gyroRate = Input.gyro.rotationRateUnbiased * Mathf.Rad2Deg;
-        Vector3 rot = gyroRate * Time.deltaTime;
-        //rot = new Vector3(rot.x, 0f, 0f);
-        transform.Rotate(rot);
+        Quaternion deviceRotation = _sensor.attitude.ReadValue();
+
+        // add 90 degrees x rotation so vase stands upright
+        transform.rotation = deviceRotation * Quaternion.Euler(90, 0, 0);
     }
 }
