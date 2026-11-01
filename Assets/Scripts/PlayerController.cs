@@ -1,13 +1,19 @@
-using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.Android;
+
+[RequireComponent(typeof(CharacterController))]
 
 public class PlayerControl : MonoBehaviour
 {   
+    //Movement
+    [SerializeField] private float speed = 3.3f;
+    private float rotSpeed = 90f;
+    private Vector3 moveDirection = Vector3.zero;
+    [SerializeField] private CharacterController controller;
+    
     //Rotation
-    private AttitudeSensor _attitudeSensor;
     private float _initialYAngle = 0f;
     private float _appliedGyroYAngle = 0f;
     private float _calibrationYAngle = 0f;
@@ -15,7 +21,7 @@ public class PlayerControl : MonoBehaviour
     private float _tempSmoothing;
     
     //Settings
-    private float _smoothing = 0.05f;
+    private float _smoothing = 0.1f;
 
     private void Update()
     {
@@ -33,24 +39,14 @@ public class PlayerControl : MonoBehaviour
 
     private IEnumerator Start()
     {
-        _attitudeSensor = InputSystem.GetDevice<AndroidGameRotationVector>();
-
-        if (_attitudeSensor == null)
-            _attitudeSensor = InputSystem.GetDevice<AndroidRotationVector>();
-
-        if (_attitudeSensor == null)
-        {
-            Debug.LogError("No rotation sensor available!");
-            yield break;
-        }
-
-        InputSystem.EnableDevice(_attitudeSensor);
+        Input.gyro.enabled = true;
         Application.targetFrameRate = 60;
         _initialYAngle = transform.eulerAngles.y;
 
         _rawGyroRotation = new GameObject("GyroRaw").transform;
         _rawGyroRotation.position = transform.position;
         _rawGyroRotation.rotation = transform.rotation;
+
         yield return new WaitForSeconds(1);
         StartCoroutine(CalibrateYAngle());
     }
@@ -66,11 +62,7 @@ public class PlayerControl : MonoBehaviour
 
     private void ApplyGyroRotation()
     {
-        if (_attitudeSensor == null || !_attitudeSensor.enabled)
-        {
-            return;
-        }
-        _rawGyroRotation.rotation = _attitudeSensor.attitude.ReadValue();
+        _rawGyroRotation.rotation = Input.gyro.attitude;
         _rawGyroRotation.Rotate(0f, 0f, 180f, Space.Self);
         _rawGyroRotation.Rotate(90f, 180f, 0f, Space.World);
         _appliedGyroYAngle = _rawGyroRotation.eulerAngles.y;
@@ -79,5 +71,11 @@ public class PlayerControl : MonoBehaviour
     private void ApplyCalibration()
     {
         _rawGyroRotation.Rotate(0f, -_calibrationYAngle, 0f, Space.World);
+    }
+
+    public void SetEnabled(bool value)
+    {
+        enabled = true;
+        StartCoroutine(CalibrateYAngle());
     }
 }

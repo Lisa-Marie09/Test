@@ -183,18 +183,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: FloralGoldJar
       objectReference: {fileID: 0}
-    - target: {fileID: 8965322849072570543, guid: 425c1d4a9cce2a541aa3c2b22b2d4fc6, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 8965322849072570543, guid: 425c1d4a9cce2a541aa3c2b22b2d4fc6, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 8965322849072570543, guid: 425c1d4a9cce2a541aa3c2b22b2d4fc6, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: -90
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -244,6 +232,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed38392652c6b134c85d7f14867568ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Gyroscope
+  rot: {x: 0, y: 0, z: 0}
 --- !u!1 &795620058
 GameObject:
   m_ObjectHideFlags: 0
